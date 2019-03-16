@@ -1,27 +1,21 @@
-var express = require('express');
-var app = express();
-var PORT = process.env.PORT || 3000;
+  // Install Express server
+  const express = require('express');
+  const path =require('path');
 
-var middleware ={
-  requireAuthentication: function(req, res, next){
-  console.log('private route hit!');
-  next();
-  },
-  logger: function (req, res, next){
-    console.log('Request:' +new Date().toString() + '' + req.method + '' + req.originalUrl);
-    next();
-  }
-};
+  const app = express();
 
-app.use(middleware.logger);
+  //Serve only the static file from the dist directory
+  //replace the '/dist/<to_your_project-name>'
 
-app.get('/about', function(req, res){
-    res.send('About Us');
-});
+  app.use(express.static(__dirname + '/dist/angular-deploy'));
 
-app.use(express.static(__dirname + '/public'));
-// console.log( );
 
-app.listen(PORT,function(){
-  console.log('express server start on port!' +  PORT );
-}); 
+  app.get('*',function(req,res){
+  
+//Replace the '/dist/<to_your_project-name>/index.html'
+res.sendFile(path.join(__dirname+ '/dist/angular-deploy/index.html'));
+  });
+
+  //Start the app by listenining on the default Heroku port
+
+  app.listen(process.env.Port || 8000);
